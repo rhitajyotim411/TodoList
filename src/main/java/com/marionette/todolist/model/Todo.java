@@ -5,6 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+// The @Entity annotation tells JPA that this class represents a database entity.
 @Entity
 public class Todo {
     @Id
