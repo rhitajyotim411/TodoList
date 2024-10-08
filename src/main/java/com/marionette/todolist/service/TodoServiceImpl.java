@@ -5,8 +5,9 @@ import com.marionette.todolist.repository.TodoRespository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.marionette.todolist.exception.*;
+
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TodoServiceImpl implements TodoService {
@@ -28,25 +29,24 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public Optional<Todo> getTodoById(Long id) {
-        return todoRespository.findById(id);
+    public Todo getTodoById(Long id) {
+        return todoRespository.findById(id)
+                .orElseThrow(() -> new TodoNotFoundException(id));
     }
 
     @Override
     public Todo updateTodo(Long id, Todo updateTodo) {
-        Optional<Todo> todoOptional = todoRespository.findById(id);
-        if (todoOptional.isPresent()) {
-            Todo existingTodo = todoOptional.get();
-            existingTodo.setTitle(updateTodo.getTitle());
-            existingTodo.setDescription(updateTodo.getDescription());
-            existingTodo.setCompleted(updateTodo.isCompleted());
-            return todoRespository.save(existingTodo);
-        }
-        return null;
+        Todo existingTodo = todoRespository.findById(id)
+                .orElseThrow(() -> new TodoNotFoundException(id));
+
+        existingTodo.setTitle(updateTodo.getTitle());
+        existingTodo.setDescription(updateTodo.getDescription());
+        existingTodo.setCompleted(updateTodo.isCompleted());
+        return todoRespository.save(existingTodo);
     }
 
     @Override
     public void deleteTodoById(Long id) {
-        todoRespository.deleteById(id); 
+        todoRespository.deleteById(id);
     }
 }
